@@ -7,20 +7,22 @@ const Statistics = ({good, neutral, bad}) => {
   if(total == 0) return <p>No feedback provided.</p>
   
   return (
-    <div>
-      <StatisticLine statisticName='good' statistic={good} />
-      <StatisticLine statisticName='neutral' statistic={neutral} />
-      <StatisticLine statisticName='bad' statistic={bad} />
-      <StatisticLine statisticName='total' statistic={total} />
-      <StatisticLine statisticName='average' statistic={((good-bad) / total).toFixed(2)} />
-      <StatisticLine statisticName='percent positive' statistic={(good / total).toFixed(2).toString().concat('%')} />
-    </div>
+    <table>
+      <tbody>
+        <StatisticLine statisticName='good' statistic={good} />
+        <StatisticLine statisticName='neutral' statistic={neutral} />
+        <StatisticLine statisticName='bad' statistic={bad} />
+        <StatisticLine statisticName='total' statistic={total} />
+        <StatisticLine statisticName='average' statistic={((good-bad) / total).toFixed(2)} />
+        <StatisticLine statisticName='positive' statistic={(good / total).toFixed(2).toString().concat('%')} />
+      </tbody>
+    </table>
   )
 }
 
 const Button = ({value, setValue, text}) => <button onClick={() => setValue(value + 1)}>{text}</button>
 
-const StatisticLine = ({statisticName, statistic}) => <p>{statisticName}: {statistic}</p>
+const StatisticLine = ({statisticName, statistic}) => <tr><td>{statisticName}</td><td>{statistic}</td></tr>
 
 const App = () => {
   //save clicks of each button to its own state
