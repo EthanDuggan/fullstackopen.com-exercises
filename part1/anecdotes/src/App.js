@@ -19,8 +19,11 @@ const App = () => {
   const randomizeAnecdote = () => setSelected(Math.floor(Math.random() * anecdotes.length))
   const voteForSelectedAnecdote = () => setVotes(votes.map((v, i) => i == selected ? v + 1 : v))
 
+  const anecdoteWithMostVotes = votes.indexOf(Math.max(...votes))
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{
         anecdotes[selected]}
         <br/>
@@ -28,6 +31,10 @@ const App = () => {
       </p>
       <button onClick={voteForSelectedAnecdote}>vote</button>
       <button onClick={randomizeAnecdote}>New Anecdote</button>
+      <h1>Anecdote with the most votes</h1>
+      <p>
+        {anecdotes[anecdoteWithMostVotes]}
+      </p>
     </div>
   )
 }
