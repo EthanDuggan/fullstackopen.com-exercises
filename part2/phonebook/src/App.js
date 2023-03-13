@@ -1,5 +1,8 @@
 import {useState} from 'react'
 
+import AddPersonForm from './components/AddPersonForm'
+import Phonebook from './components/Phonebook'
+
 const App = () => {
   const [persons, setPersons] = useState([
     {
@@ -34,24 +37,18 @@ const App = () => {
     setNewNumber('')
   }
 
-  const filteredPersons = persons.filter((person) => person.name.toLowerCase().includes(searchQuery.toLocaleLowerCase()))
-
   return (
     <div>
       <h1>Phonebook</h1>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <div>search: <input value={searchQuery} onChange={handleSearchQueryChange}/></div>
-      </form>
+      
+      
       <h2>Add a new person</h2>
-      <form onSubmit={addPerson}>
-        <div>name: <input value={newName} onChange={handleFormNameChange}/></div>
-        <div>number: <input value={newNumber} onChange={handleFormNumberChange}/></div>
-        <div><button type='submit'>add</button></div>
-      </form>
+
+      <AddPersonForm addPerson={addPerson} handleFormNameChange={handleFormNameChange} handleFormNumberChange={handleFormNumberChange} newName={newName} newNumber={newNumber} />
+      
       <h2>Numbers</h2>
-      <ul>
-        {filteredPersons.map(person => <li key={person.name}>{person.name} {person.number}</li>)}
-      </ul>
+
+      <Phonebook persons={persons} searchQuery={searchQuery} handleSearchQueryChange={handleSearchQueryChange}/>
     </div>
   )
 }
