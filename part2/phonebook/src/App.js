@@ -9,6 +9,14 @@ const App = () => {
   const handleFormNameChange = (event) => setNewName(event.target.value)
   const addPerson = (event) => {
     event.preventDefault()
+
+    //guard clause to make sure newName is unique
+    const newNameAlreadyExists = persons.reduce((x, person) => person.name === newName ? true : x, false)
+    if(newNameAlreadyExists) {
+      alert(`${newName} already exists in the phonebook`)
+      return
+    }
+    
     setPersons(persons.concat({name: newName}))
     setNewName('')
   }
