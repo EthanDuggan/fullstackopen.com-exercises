@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react'
-import axios from 'axios'
+
+import phonebookService from './services/phonebook'
 
 import AddPersonForm from './components/AddPersonForm'
 import Phonebook from './components/Phonebook'
@@ -11,9 +12,8 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data))
+    phonebookService.getAllPersons()
+      .then(allPersons => setPersons(allPersons))
   }, [])
 
   const handleFormNameChange = (event) => setNewName(event.target.value)
@@ -29,13 +29,18 @@ const App = () => {
       alert(`${newName} already exists in the phonebook`)
       return
     }
-    
-    setPersons(persons.concat({
-        name: newName, 
-        number: newNumber
-    }))
-    setNewName('')
-    setNewNumber('')
+
+    const newPersonObject = {
+      name: newName, 
+      number: newNumber
+    }
+
+    phonebookService.savePerson(newPersonObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   return (
