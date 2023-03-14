@@ -1,6 +1,6 @@
 import Contact from './Contact'
 
-const Phonebook = ({persons, searchQuery, handleSearchQueryChange}) => {
+const Phonebook = ({persons, searchQuery, handleSearchQueryChange, deletePerson}) => {
 
     const filteredPersons = persons.filter((person) => person.name.toLowerCase().includes(searchQuery.toLocaleLowerCase()))
 
@@ -10,7 +10,7 @@ const Phonebook = ({persons, searchQuery, handleSearchQueryChange}) => {
                 <div>search: <input value={searchQuery} onChange={handleSearchQueryChange}/></div>
             </form>
             <ul>
-                {filteredPersons.map(person => <Contact key={person.name} person={person} />)}
+                {filteredPersons.map(person => <Contact key={person.name} person={person} deletePerson={deletePerson} />)}
             </ul>
         </div>
     )

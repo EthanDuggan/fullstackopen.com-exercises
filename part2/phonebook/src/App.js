@@ -16,11 +16,11 @@ const App = () => {
       .then(allPersons => setPersons(allPersons))
   }, [])
 
-  const handleFormNameChange = (event) => setNewName(event.target.value)
-  const handleFormNumberChange = (event) => setNewNumber(event.target.value)
-  const handleSearchQueryChange = (event) => setSearchQuery(event.target.value)
+  const handleFormNameChange = event => setNewName(event.target.value)
+  const handleFormNumberChange = event => setNewNumber(event.target.value)
+  const handleSearchQueryChange = event => setSearchQuery(event.target.value)
 
-  const addPerson = (event) => {
+  const addPerson = event => {
     event.preventDefault()
 
     //guard clause to make sure newName is unique
@@ -43,6 +43,14 @@ const App = () => {
       })
   }
 
+  const deletePerson = person => {
+    if(window.confirm(`Delete ${person.name} form your phonebook?`)){
+      phonebookService.deletePerson(person.id)
+      .then(() => phonebookService.getAllPersons())
+      .then(allPersons => setPersons(allPersons))
+    }
+  }
+
   return (
     <div>
       <h1>Phonebook</h1>
@@ -54,7 +62,7 @@ const App = () => {
       
       <h2>Numbers</h2>
 
-      <Phonebook persons={persons} searchQuery={searchQuery} handleSearchQueryChange={handleSearchQueryChange}/>
+      <Phonebook persons={persons} searchQuery={searchQuery} handleSearchQueryChange={handleSearchQueryChange} deletePerson={deletePerson} />
     </div>
   )
 }

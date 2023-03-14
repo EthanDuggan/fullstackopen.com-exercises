@@ -18,4 +18,12 @@ const savePerson = newPersonObject => {
     )
 }
 
-export default {getAllPersons, savePerson}
+const deletePerson = id => {
+    return (
+        axios
+            .delete(personsURL + id)
+            .then(response => response.data)
+    )
+}
+
+export default {getAllPersons, savePerson, deletePerson}

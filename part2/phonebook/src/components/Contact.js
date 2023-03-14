@@ -1,5 +1,10 @@
-const Contact = ({person}) => {
-    return <li>{person.name} {person.number}</li>
+const Contact = ({person, deletePerson}) => {
+    return (
+        <li>
+            {person.name} {person.number}
+            <button onClick={() => deletePerson(person)}>delete</button>
+        </li>
+    )
 }
 
 export default Contact
