@@ -1,4 +1,15 @@
+import {useState, useEffect} from 'react'
+
+import weatherAPI from '../services/weather'
+
 const CountryInfoView = ({country}) => {
+    const [weather, setWeather] = useState(null)
+
+    useEffect(() => {
+        weatherAPI.getWeatherAtCapital(country)
+            .then(data => setWeather(data))
+    })
+
     return (
         <div>
             <h1>{country.name.common}</h1>
@@ -13,6 +24,13 @@ const CountryInfoView = ({country}) => {
             <ul>
                 {Object.values(country.languages).map(language => <li key={language}>{language}</li>)}
             </ul>
+            <h2>Weather in {country.capital[0]}</h2>
+            <img src={weather ? weather.condition.icon : ''} />
+            <p>
+                temperature: {weather ? `${weather.temp_c} celsius` : 'loading...'}
+                <br/>
+                wind: {weather ? `${weather.wind_kph} kph` : 'loading...'}
+            </p>
         </div>
     )
 }

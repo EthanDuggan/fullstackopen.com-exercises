@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react'
 
 import countriesAPI from './services/countries'
+import weatherAPI from './services/weather'
 
 import CountriesList from './components/CountriesList'
 import CountryInfoView from './components/CountryInfoView'
@@ -30,6 +31,7 @@ function App() {
 
   const generateSearchResultView = () => {
     if(selectedCountry){
+      weatherAPI.getWeatherAtCapital(selectedCountry) //test
       return <CountryInfoView country={selectedCountry} />
     }else if(countriesToShow.length > 10) {
       return <p>Too many matches, try a more specific query.</p>
