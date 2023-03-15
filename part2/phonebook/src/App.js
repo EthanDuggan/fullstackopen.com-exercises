@@ -13,7 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
-  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationData, setNotificationData] = useState(null)
 
   //initialize persons array with data from server
   useEffect(() => {
@@ -22,9 +22,9 @@ const App = () => {
   }, [])
 
   //define utility funcitons
-  const showNotification = (message, duration) => {
-    setNotificationMessage(message)
-    setTimeout(() => setNotificationMessage(null), duration)
+  const showNotification = (message, duration, isError) => {
+    setNotificationData({message, isError})
+    setTimeout(() => setNotificationData(null), duration)
   }
 
   //define various event handlers
@@ -48,6 +48,15 @@ const App = () => {
           .then(updatedPerson => {
             setPersons(persons.map(p => p.id === updatedPerson.id ? updatedPerson : p))
           })
+          .catch(error => {
+            let errorMessage
+            if(error.response.status == 404) {
+              errorMessage = `Could not find ${existingPerson.name}, their information may have been deleted.`
+            } else {
+              errorMessage = `Something went wrong...  Failed to update ${existingPerson.name}'s information.`
+            }
+            showNotification(errorMessage, 5000, true)
+          })
       }
       return
     }
@@ -58,7 +67,7 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
-        showNotification(`Added ${returnedPerson.name}`, 5000)
+        showNotification(`Added ${returnedPerson.name}`, 5000, false)
       })
   }
 
@@ -73,7 +82,7 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
       
-      <Notification message={notificationMessage} />
+      <Notification notificationData={notificationData} />
       
       <h2>Add a new person</h2>
 
