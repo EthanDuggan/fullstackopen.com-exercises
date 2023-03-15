@@ -20,22 +20,27 @@ const App = () => {
   const handleFormNumberChange = event => setNewNumber(event.target.value)
   const handleSearchQueryChange = event => setSearchQuery(event.target.value)
 
-  const addPerson = event => {
+  const savePerson = event => {
     event.preventDefault()
-
-    //guard clause to make sure newName is unique
-    const newNameAlreadyExists = persons.reduce((x, person) => person.name === newName ? true : x, false)
-    if(newNameAlreadyExists) {
-      alert(`${newName} already exists in the phonebook`)
-      return
-    }
 
     const newPersonObject = {
       name: newName, 
       number: newNumber
     }
 
-    phonebookService.savePerson(newPersonObject)
+    //guard clause to see if the name already exists in the phonebook, if it does, update the contact
+    const existingPerson = persons.reduce((x, p) => p.name === newName ? p : x, null)
+    if(existingPerson !== null) {
+      if(window.confirm(`${newName} already exists in the phonebook, update their number?`)){
+        phonebookService.updatePerson(existingPerson.id, newPersonObject)
+          .then(updatedPerson => {
+            setPersons(persons.map(p => p.id === updatedPerson.id ? updatedPerson : p))
+          })
+      }
+      return
+    }
+
+    phonebookService.addPerson(newPersonObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
@@ -46,8 +51,9 @@ const App = () => {
   const deletePerson = person => {
     if(window.confirm(`Delete ${person.name} form your phonebook?`)){
       phonebookService.deletePerson(person.id)
-      .then(() => phonebookService.getAllPersons())
-      .then(allPersons => setPersons(allPersons))
+      .then(() => setPersons(persons.filter(p => p.id !== person.id)))
+      /*.then(() => phonebookService.getAllPersons())
+      .then(allPersons => setPersons(allPersons))*/
     }
   }
 
@@ -58,7 +64,7 @@ const App = () => {
       
       <h2>Add a new person</h2>
 
-      <AddPersonForm addPerson={addPerson} handleFormNameChange={handleFormNameChange} handleFormNumberChange={handleFormNumberChange} newName={newName} newNumber={newNumber} />
+      <AddPersonForm savePerson={savePerson} handleFormNameChange={handleFormNameChange} handleFormNumberChange={handleFormNumberChange} newName={newName} newNumber={newNumber} />
       
       <h2>Numbers</h2>
 

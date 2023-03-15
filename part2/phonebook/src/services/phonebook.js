@@ -10,7 +10,7 @@ const getAllPersons = () => {
     )
 }
 
-const savePerson = newPersonObject => {
+const addPerson = newPersonObject => {
     return (
         axios
             .post(personsURL, newPersonObject)
@@ -26,4 +26,12 @@ const deletePerson = id => {
     )
 }
 
-export default {getAllPersons, savePerson, deletePerson}
+const updatePerson = (id, person) => {
+    return (
+        axios
+            .put(personsURL + id, person)
+            .then(response => response.data)
+    )
+}
+
+export default {getAllPersons, addPerson, deletePerson, updatePerson}
