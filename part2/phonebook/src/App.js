@@ -4,18 +4,30 @@ import phonebookService from './services/phonebook'
 
 import AddPersonForm from './components/AddPersonForm'
 import Phonebook from './components/Phonebook'
+import Notification from './components/Notification'
 
 const App = () => {
+
+  //define state
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
+  //initialize persons array with data from server
   useEffect(() => {
     phonebookService.getAllPersons()
       .then(allPersons => setPersons(allPersons))
   }, [])
 
+  //define utility funcitons
+  const showNotification = (message, duration) => {
+    setNotificationMessage(message)
+    setTimeout(() => setNotificationMessage(null), duration)
+  }
+
+  //define various event handlers
   const handleFormNameChange = event => setNewName(event.target.value)
   const handleFormNumberChange = event => setNewNumber(event.target.value)
   const handleSearchQueryChange = event => setSearchQuery(event.target.value)
@@ -40,11 +52,13 @@ const App = () => {
       return
     }
 
+    //if passed previous guard clause, then this is a new contact and we add them accordingly
     phonebookService.addPerson(newPersonObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        showNotification(`Added ${returnedPerson.name}`, 5000)
       })
   }
 
@@ -52,8 +66,6 @@ const App = () => {
     if(window.confirm(`Delete ${person.name} form your phonebook?`)){
       phonebookService.deletePerson(person.id)
       .then(() => setPersons(persons.filter(p => p.id !== person.id)))
-      /*.then(() => phonebookService.getAllPersons())
-      .then(allPersons => setPersons(allPersons))*/
     }
   }
 
@@ -61,6 +73,7 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
       
+      <Notification message={notificationMessage} />
       
       <h2>Add a new person</h2>
 
