@@ -63,11 +63,16 @@ const App = () => {
 
     //if passed previous guard clause, then this is a new contact and we add them accordingly
     phonebookService.addPerson(newPersonObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
+      .then(createdPerson => {
+        setPersons(persons.concat(createdPerson))
         setNewName('')
         setNewNumber('')
-        showNotification(`Added ${returnedPerson.name}`, 5000, false)
+        showNotification(`Added ${createdPerson.name}`, 5000, false)
+      })
+      .catch(error => {
+        const errorMessage = error.response.data.error
+        console.log(errorMessage)
+        showNotification(errorMessage, 8000, true)
       })
   }
 

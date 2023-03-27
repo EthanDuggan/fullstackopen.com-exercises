@@ -1,6 +1,7 @@
 const Notification = ({notificationData}) => {
     
     if(notificationData === null) return null
+    
     const {message, isError} = notificationData
 
     const styleColor = isError ? 'red' : 'green'
