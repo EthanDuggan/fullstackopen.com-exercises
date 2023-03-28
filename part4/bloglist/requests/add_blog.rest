@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-	"title": "Best blog ever",
-	"author": "Sam",
+	"title": "Frogs are evil",
+	"author": "doodman the great",
 	"url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
-	"likes": 1000
+	"likes": 2
 }
