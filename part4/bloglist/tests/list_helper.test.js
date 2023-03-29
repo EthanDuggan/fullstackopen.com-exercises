@@ -40,13 +40,37 @@ describe('favourite blog', () => {
 		expect(listHelper.favouriteBlog(listWithOneBlog)).toEqual(expectedObject)
 	})
 
-	test('is the one with the most likes among a list of many blogs', () => {
+	test('of a bigger list is calculated right', () => {
 		const expectedObject = {
 			title: blogs[4].title,
 			author: blogs[4].author,
 			likes: blogs[4].likes,
 		}
 		expect(listHelper.favouriteBlog(blogs)).toEqual(expectedObject)
+	})
+
+})
+
+describe('author with most blogs', () => {
+
+	test('of an empty list is null', () => {
+		expect(listHelper.mostBlogs([])).toBeNull()
+	})
+
+	test('when the list only has one blog, is author of that blog', () => {
+		const expectedObject = {
+			author: listWithOneBlog[0].author,
+			blogs: 1
+		}
+		expect(listHelper.mostBlogs(listWithOneBlog)).toEqual(expectedObject)
+	})
+
+	test('of a bigger list is calculated right', () => {
+		const expectedObject = {
+			author: 'Robert C. Martin',
+			blogs: 3
+		}
+		expect(listHelper.mostBlogs(blogs)).toEqual(expectedObject)
 	})
 
 })
