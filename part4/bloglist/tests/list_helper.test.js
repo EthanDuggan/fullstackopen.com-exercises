@@ -75,6 +75,30 @@ describe('author with most blogs', () => {
 
 })
 
+describe('author with most likes', () => {
+
+	test('of an empty list is null', () => {
+		expect(listHelper.mostLikes([])).toBeNull()
+	})
+
+	test('when the list only has one blog, is author of that blog', () => {
+		const expectedObject = {
+			author: listWithOneBlog[0].author,
+			likes: 5
+		}
+		expect(listHelper.mostLikes(listWithOneBlog)).toEqual(expectedObject)
+	})
+	
+	test('of a bigger list is calculated right', () => {
+		const expectedObject = {
+			author: 'Robert C. Martin',
+			likes: 140
+		}
+		expect(listHelper.mostLikes(blogs)).toEqual(expectedObject)
+	})
+
+})
+
 // TEST DATA (WARNING: CHANGING THE TEST DATA WILL CAUSE SOME TESTS TO FAIL BECAUSE THE EXPECTED VALUES ARE HARDCODED IN THE TESTS)
 // some tests may use their own data if the test data defined below is not able to facilitate the test
 
