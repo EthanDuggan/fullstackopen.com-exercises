@@ -21,36 +21,64 @@ beforeEach(async () => {
 
 // TESTS
 
-test('correct amount of blogs are returned when getting them all', async () => {
-	const response = await api.get('/api/blogs')
-	expect(response.body).toHaveLength(initialBlogs.length)
-}, 100000)
+describe('GET /api/blogs', () => {
 
-
-test('unique identifier of fetched blog posts is stored in property called "id"', async () => {
-	const response = await api.get('/api/blogs')
-	const firstBlogInList = response.body[0]
-	expect(firstBlogInList.id).toBeDefined()
-}, 100000)
-
-test('verify that post request to /api/blogs works as expected', async () => {
-	const newBlog = {
-		title: "This is being added for testing purposes",
-		author: "Testman",
-		url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
-		likes: 69,
-	}
-
-	const response = await api.post('/api/blogs').send(newBlog)
-		.expect(201)
-		.expect('Content-Type', /application\/json/)
+	test('correct amount of blogs are returned when getting them all', async () => {
+		const response = await api.get('/api/blogs')
+		expect(response.body).toHaveLength(initialBlogs.length)
+	}, 100000)
 	
-	const returnedBlog = response.body
-	expect(returnedBlog).toMatchObject(newBlog)
 	
-	const blogsAtEnd = await getBlogsFromDB()
-	expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
-	expect(blogsAtEnd).toContainEqual(returnedBlog)
+	test('unique identifier of fetched blog posts is stored in property called "id"', async () => {
+		const response = await api.get('/api/blogs')
+		const firstBlogInList = response.body[0]
+		expect(firstBlogInList.id).toBeDefined()
+	}, 100000)
+
+})
+
+
+describe('POST /api/blogs', () => {
+
+	test('verify that post request to /api/blogs works as expected', async () => {
+		const newBlog = {
+			title: "This is being added for testing purposes",
+			author: "Testman",
+			url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
+			likes: 69,
+		}
+
+		const response = await api.post('/api/blogs').send(newBlog)
+			.expect(201)
+			.expect('Content-Type', /application\/json/)
+		
+		const returnedBlog = response.body
+		expect(returnedBlog).toMatchObject(newBlog)
+		
+		const blogsAtEnd = await getBlogsFromDB()
+		expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+		expect(blogsAtEnd).toContainEqual(returnedBlog)
+	}, 100000)
+
+	test('verify that if the likes property is missing from request, it defaults to 0', async () => {
+		const newBlogMissingLikes = {
+			title: "This is being added for testing purposes",
+			author: "Testman",
+			url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
+		}
+
+		const response = await api.post('/api/blogs').send(newBlogMissingLikes)
+			.expect(201)
+			.expect('Content-Type', /application\/json/)
+		
+		const returnedBlog = response.body
+		expect(returnedBlog).toMatchObject({...newBlogMissingLikes, likes: 0})
+
+		const blogsAtEnd = await getBlogsFromDB()
+		expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+		expect(blogsAtEnd).toContainEqual(returnedBlog)
+	}, 100000)
+
 })
 
 // CLOSE DB CONNECTION AFTER TESTING
