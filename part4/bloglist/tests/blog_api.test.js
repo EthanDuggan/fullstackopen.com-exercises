@@ -27,6 +27,12 @@ test('correct amount of blogs are returned when getting them all', async () => {
 }, 100000)
 
 
+test('unique identifier of fetched blog posts is stored in property called "id"', async () => {
+	const response = await api.get('/api/blogs')
+	const firstBlogInList = response.body[0]
+	expect(firstBlogInList.id).toBeDefined()
+}, 100000)
+
 // CLOSE DB CONNECTION AFTER TESTING
 afterAll(async () => {
 	await mongoose.connection.close()
