@@ -111,8 +111,41 @@ describe('DELETE /api/blogs/:id', () => {
 		const blogsAtEnd = await getBlogsFromDB()
 		expect(blogsAtEnd).toHaveLength(initialBlogs.length - 1)
 		expect(blogsAtEnd).not.toContainEqual(blogToDelete)
+	}, 100000)
+
+})
+
+
+describe('PUT /api/blogs/:id', () => {
+
+	test('works with valid id and data', async () => {
+		const blogsAtStart = await getBlogsFromDB()
+		const blogToUpdate = blogsAtStart[0]
+		const newDataForBlogToUpdate = {...singleBlogToAdd}
+		
+		const response = await api.put(`/api/blogs/${blogToUpdate.id}`)
+			.send(newDataForBlogToUpdate)
+			.expect(200)
+			.expect('Content-Type', /application\/json/)
+
+		const returnedBlog = response.body
+		const expectedUpdatedBlog = { id: blogToUpdate.id, ...newDataForBlogToUpdate }
+		expect(returnedBlog).toMatchObject(expectedUpdatedBlog)
+		
+		const blogsAtEnd = await getBlogsFromDB()
+		expect(blogsAtEnd).toHaveLength(initialBlogs.length)
+		expect(blogsAtEnd).toContainEqual(expectedUpdatedBlog)
+	}, 100000)
+
+	test('does not work with nonExistent id', async () => {
+		const nonExistentId = await generateValidButNonExistingId()
+		const newDataForBlogToUpdate = {...singleBlogToAdd}
+
+		const response = await api.put(`/api/blogs/${nonExistentId}`)
+			.send(newDataForBlogToUpdate)
+			.expect(400)
 	})
-	
+
 })
 
 
