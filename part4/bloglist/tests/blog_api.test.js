@@ -33,6 +33,26 @@ test('unique identifier of fetched blog posts is stored in property called "id"'
 	expect(firstBlogInList.id).toBeDefined()
 }, 100000)
 
+test('verify that post request to /api/blogs works as expected', async () => {
+	const newBlog = {
+		title: "This is being added for testing purposes",
+		author: "Testman",
+		url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
+		likes: 69,
+	}
+
+	const response = await api.post('/api/blogs').send(newBlog)
+		.expect(201)
+		.expect('Content-Type', /application\/json/)
+	
+	const returnedBlog = response.body
+	expect(returnedBlog).toMatchObject(newBlog)
+	
+	const blogsAtEnd = await getBlogsFromDB()
+	expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+	expect(blogsAtEnd).toContainEqual(returnedBlog)
+})
+
 // CLOSE DB CONNECTION AFTER TESTING
 afterAll(async () => {
 	await mongoose.connection.close()
