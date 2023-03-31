@@ -5,7 +5,7 @@ const cors = require('cors')
 const blogsRouter = require('./controllers/blogs')
 const mongoose = require('mongoose')
 
-mongoose.connect(config.mongoUrl)
+mongoose.connect(config.MONGODB_URI)
 
 app.use(cors())
 app.use(express.json())
