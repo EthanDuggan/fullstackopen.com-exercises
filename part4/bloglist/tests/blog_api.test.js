@@ -40,7 +40,7 @@ describe('GET /api/blogs', () => {
 
 describe('POST /api/blogs', () => {
 
-	test('POST requests to /api/blogs work as expected', async () => {
+	test('works with valid data', async () => {
 		const newBlog = {...singleBlogToAdd}
 
 		const response = await api.post('/api/blogs').send(newBlog)
@@ -54,6 +54,7 @@ describe('POST /api/blogs', () => {
 		expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
 		expect(blogsAtEnd).toContainEqual(returnedBlog)
 	}, 100000)
+
 
 	test('if the likes property is missing from request, it defaults to 0', async () => {
 		const newBlogMissingLikes = {...singleBlogToAdd}
@@ -71,6 +72,7 @@ describe('POST /api/blogs', () => {
 		expect(blogsAtEnd).toContainEqual(returnedBlog)
 	}, 100000)
 
+
 	test('if the title property is missing from the request, the api returns with status code 400', async () => {
 		const newBlogMissingTitle = {...singleBlogToAdd}
 		delete newBlogMissingTitle.title
@@ -81,6 +83,7 @@ describe('POST /api/blogs', () => {
 		const blogsAtEnd = await getBlogsFromDB()
 		expect(blogsAtEnd).toHaveLength(initialBlogs.length)
 	}, 100000)
+
 
 	test('if the url property is missing from the request, the api returns with status code 400', async () => {
 		const newBlogMissingUrl = {...singleBlogToAdd}
@@ -94,6 +97,24 @@ describe('POST /api/blogs', () => {
 	}, 100000)
 
 })
+
+
+describe('DELETE /api/blogs/:id', () => {
+	
+	test('works with valid id', async () => {
+		const blogsAtStart = await getBlogsFromDB()
+		const blogToDelete = blogsAtStart[0]
+
+		await api.delete(`/api/blogs/${blogToDelete.id}`)
+			.expect(204)
+		
+		const blogsAtEnd = await getBlogsFromDB()
+		expect(blogsAtEnd).toHaveLength(initialBlogs.length - 1)
+		expect(blogsAtEnd).not.toContainEqual(blogToDelete)
+	})
+	
+})
+
 
 // CLOSE DB CONNECTION AFTER TESTING
 afterAll(async () => {
@@ -134,4 +155,11 @@ const singleBlogToAdd = {
 const getBlogsFromDB = async () => {
 	const blogs = await blog.find({})
 	return blogs.map(blog => blog.toJSON())
+}
+
+const generateValidButNonExistingId = async () => {
+	const blog = new Blog({title: 'will delete soon', author: 'x', url: 'x'})
+	await blog.save()
+	await blog.deleteOne()
+	return blog._id.toString()
 }
