@@ -40,13 +40,8 @@ describe('GET /api/blogs', () => {
 
 describe('POST /api/blogs', () => {
 
-	test('verify that post request to /api/blogs works as expected', async () => {
-		const newBlog = {
-			title: "This is being added for testing purposes",
-			author: "Testman",
-			url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
-			likes: 69,
-		}
+	test('POST requests to /api/blogs work as expected', async () => {
+		const newBlog = {...singleBlogToAdd}
 
 		const response = await api.post('/api/blogs').send(newBlog)
 			.expect(201)
@@ -60,12 +55,9 @@ describe('POST /api/blogs', () => {
 		expect(blogsAtEnd).toContainEqual(returnedBlog)
 	}, 100000)
 
-	test('verify that if the likes property is missing from request, it defaults to 0', async () => {
-		const newBlogMissingLikes = {
-			title: "This is being added for testing purposes",
-			author: "Testman",
-			url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
-		}
+	test('if the likes property is missing from request, it defaults to 0', async () => {
+		const newBlogMissingLikes = {...singleBlogToAdd}
+		delete newBlogMissingLikes.likes
 
 		const response = await api.post('/api/blogs').send(newBlogMissingLikes)
 			.expect(201)
@@ -77,6 +69,28 @@ describe('POST /api/blogs', () => {
 		const blogsAtEnd = await getBlogsFromDB()
 		expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
 		expect(blogsAtEnd).toContainEqual(returnedBlog)
+	}, 100000)
+
+	test('if the title property is missing from the request, the api returns with status code 400', async () => {
+		const newBlogMissingTitle = {...singleBlogToAdd}
+		delete newBlogMissingTitle.title
+
+		const response = await api.post('/api/blogs').send(newBlogMissingTitle)
+			.expect(400)
+		
+		const blogsAtEnd = await getBlogsFromDB()
+		expect(blogsAtEnd).toHaveLength(initialBlogs.length)
+	}, 100000)
+
+	test('if the url property is missing from the request, the api returns with status code 400', async () => {
+		const newBlogMissingUrl = {...singleBlogToAdd}
+		delete newBlogMissingUrl.url
+
+		const response = await api.post('/api/blogs').send(newBlogMissingUrl)
+			.expect(400)
+		
+		const blogsAtEnd = await getBlogsFromDB()
+		expect(blogsAtEnd).toHaveLength(initialBlogs.length)
 	}, 100000)
 
 })
@@ -108,6 +122,13 @@ const initialBlogs = [
 	likes: 2,
 	}
 ]
+
+const singleBlogToAdd = {
+	title: "This is being added for testing purposes",
+	author: "Testman",
+	url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
+	likes: 69,
+}
 
 // HELPER FUNCTIONS
 const getBlogsFromDB = async () => {
