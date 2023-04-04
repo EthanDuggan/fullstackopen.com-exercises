@@ -1,11 +1,13 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
-const blog = require('../models/blog')
+
+const bcrypt = require('bcrypt')
 
 const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 // CODE FOR INITIALIZING THE DATABASE BEFORE TESTS
 
@@ -144,7 +146,68 @@ describe('PUT /api/blogs/:id', () => {
 		const response = await api.put(`/api/blogs/${nonExistentId}`)
 			.send(newDataForBlogToUpdate)
 			.expect(400)
+	}, 100000)
+
+})
+
+describe('POST /api/users', () => {
+
+	beforeEach(async () => {
+		await User.deleteMany({})
+		const userObjects = (await generateInitialUsers()).map(user => new User(user))
+		const promiseArray = userObjects.map(userObject => userObject.save())
+		await Promise.all(promiseArray)
 	})
+
+	test('user with non-unique username cannot be added', async () => {
+		const usersAtStart = await getUsersFromDB()
+		
+		// try to add a user with an existing username
+		const newUser = {
+			username: usersAtStart[0].username,
+			name: 'I should not exist',
+			password: 'password123'
+		}
+		await api.post('/api/users').send(newUser)
+			.expect(400)
+			.expect('Content-Type', /application\/json/)
+		
+		const usersAtEnd = await getUsersFromDB()
+		expect(usersAtEnd).toHaveLength(usersAtStart.length)
+	}, 100000)
+
+	test('user with too invalid username cannot be added', async () => {
+		const usersAtStart = await getUsersFromDB()
+
+		const newUser = {
+			username: '12',
+			name: 'I should not exist',
+			password: 'password123'
+		}
+		await api.post('/api/users').send(newUser)
+			.expect(400)
+			.expect('Content-Type', /application\/json/)
+
+		const usersAtEnd = await getUsersFromDB()
+		expect(usersAtEnd).toHaveLength(usersAtStart.length)
+	}, 100000)
+
+	test('user with too invalid password cannot be added', async () => {
+		const usersAtStart = await getUsersFromDB()
+
+		const newUser = {
+			username: 'IShouldNotExist',
+			name: 'I should not exist',
+			password: '12'
+		}
+		await api.post('/api/users').send(newUser)
+			.expect(400)
+			.expect('Content-Type', /application\/json/)
+
+		const usersAtEnd = await getUsersFromDB()
+		expect(usersAtEnd).toHaveLength(usersAtStart.length)
+	}, 100000)
+
 
 })
 
@@ -184,10 +247,44 @@ const singleBlogToAdd = {
 	likes: 69,
 }
 
+const generateInitialUsers = async () => {
+	const saltRounds = 10
+
+	return [
+		{
+			username: "firstUser",
+			name: "Bobby",
+			passwordHash: await bcrypt.hash("12345", saltRounds)
+		},
+		{
+			username: "secondUser",
+			name: "Billy",
+			passwordHash: await bcrypt.hash("12345", saltRounds)
+		},
+		{
+			username: "thirdUser",
+			name: "Joey",
+			passwordHash: await bcrypt.hash("abcde", saltRounds)
+		},
+	]
+}
+
+
+const singleUserToAdd = {
+	username: "addedUser",
+	name: "Bart",
+	password: "12345"
+}
+
 // HELPER FUNCTIONS
 const getBlogsFromDB = async () => {
-	const blogs = await blog.find({})
+	const blogs = await Blog.find({})
 	return blogs.map(blog => blog.toJSON())
+}
+
+const getUsersFromDB = async () => {
+	const users = await User.find({})
+	return users.map(user => user.toJSON())
 }
 
 const generateValidButNonExistingId = async () => {
