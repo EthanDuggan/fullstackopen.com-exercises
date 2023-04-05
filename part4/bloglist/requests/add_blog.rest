@@ -1,9 +1,9 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkZGVkV2l0aFZTQ29kZVJFU1QiLCJpZCI6IjY0MmM5YjBlZWU1NGU3M2FjMDEwM2VlZCIsImlhdCI6MTY4MDcxNzMwOH0.n9pRo820r_AIogIPZL4C3GUIIRyovcdrd96wj-EzzJc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkZGVkV2l0aFZTQ29kZVJFU1QiLCJpZCI6IjY0MmM5YjBlZWU1NGU3M2FjMDEwM2VlZCIsImlhdCI6MTY4MDcxOTY5N30.6-yUtKn40paYKp7G2nR3V2cbltbzxuZDmFxzFmdzz0I
 
 {
-	"title": "New note with user 4",
+	"title": "New note with user 5",
 	"author": "doodman the great",
 	"url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
 	"likes": 2

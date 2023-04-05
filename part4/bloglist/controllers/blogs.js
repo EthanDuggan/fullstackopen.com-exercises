@@ -16,14 +16,13 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const blogInfo = request.body
   
-  // decode the JWT
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
+  // check for current user
+  if (!request.user) {
     return response.status(401).json({ error: 'token invalid' })
   }
 
   // find the user using the information form the decoded JWT
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findById(request.user)
 
   // define new Blog object
   const blog = new Blog({ ...blogInfo, user: user.id })
@@ -42,8 +41,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     return response.status(204).end()
   }
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id || decodedToken.id.toString() !== blogToDelete.user.toString()) {
+  if (!request.user || request.user.toString() !== blogToDelete.user.toString()) {
     return response.status(401).json({ error: 'token invalid' })
   }
 

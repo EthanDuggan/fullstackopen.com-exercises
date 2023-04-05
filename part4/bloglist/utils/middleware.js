@@ -1,4 +1,4 @@
-
+const jwt = require('jsonwebtoken')
 
 const errorHandler = (error, request, response, next) => {
 	console.error(error.message)
@@ -16,6 +16,7 @@ const errorHandler = (error, request, response, next) => {
 	next(error)
 }
 
+// extracts the JWT from the authorization header and stores it in request.token
 const tokenExtractor = (request, response, next) => {
 	const authorization = request.get('authorization')
   if (authorization && authorization.startsWith('Bearer ')) {
@@ -24,7 +25,17 @@ const tokenExtractor = (request, response, next) => {
   next()
 }
 
+// decodes the JWT and stores the user id in request.user
+const userExtractor = (request, response, next) => {
+	const decodedToken = jwt.verify(request.token, process.env.SECRET)
+	if (decodedToken.id) {
+		request.user = decodedToken.id
+	}
+	next()
+}
+
 module.exports = {
 	errorHandler,
 	tokenExtractor,
+	userExtractor,
 }
