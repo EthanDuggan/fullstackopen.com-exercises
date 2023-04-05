@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-	"title": "Frogs are evil",
+	"title": "New note with user 2",
 	"author": "doodman the great",
 	"url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
 	"likes": 2
