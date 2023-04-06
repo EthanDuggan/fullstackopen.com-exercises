@@ -78,6 +78,18 @@ describe('POST /api/blogs', () => {
 		expect(blogsAtEnd).toContainEqual(returnedBlog)
 	}, 100000)
 
+	test('does not work if no JWT provided', async () => {
+		const newBlog = {...singleBlogToAdd}
+
+		const response = await api
+			.post('/api/blogs')
+			.send(newBlog)
+			.expect(401)
+
+		const blogsAtEnd = await getBlogsFromDB()
+		expect(blogsAtEnd).toHaveLength(initialBlogs.length)
+	})
+
 
 	test('if the likes property is missing from request, it defaults to 0', async () => {
 		const token = await getValidToken()
