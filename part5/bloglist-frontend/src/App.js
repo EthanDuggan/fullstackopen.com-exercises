@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import AddBlogForm from './components/AddBlogForm'
+import Notification from './components/Notification'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -16,6 +17,8 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  // notifications
+  const [notificationData, setNotificationData] = useState(null)
 
 
   // DECLARE EFFECT HOOKS
@@ -50,8 +53,10 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch {
-      console.error('wrong credentials')
+      showNotification(`Logged in ${user.username}`, 5000, false)
+    } catch(exception) {
+      console.error(exception)
+      showNotification('wrong credentials', 5000, true)
     }
   }
 
@@ -59,12 +64,21 @@ const App = () => {
     window.localStorage.removeItem('loggedInUser')
     blogService.setToken(null)
     setUser(null)
+    showNotification('logged out', 5000, false)
+  }
+
+  // MISC FUNCITONS
+
+  const showNotification = (message, duration, isError) => {
+    setNotificationData({ message, isError })
+    setTimeout(() => setNotificationData(null), duration)
   }
 
   // show login form if no user logged in
   if (!user) {
     return (
       <div>
+        <Notification notificationData={notificationData} />
         <h2>login</h2>
         <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword} />
       </div>
@@ -73,11 +87,12 @@ const App = () => {
 
   return (
     <div>
+        <Notification notificationData={notificationData} />
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
 
         <h2>add blog</h2>
-        <AddBlogForm blogs={blogs} setBlogs={setBlogs} />
+        <AddBlogForm blogs={blogs} setBlogs={setBlogs} showNotification={showNotification} />
 
         <h2>blogs</h2>
         {blogs.map(blog =>

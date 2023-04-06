@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const AddBlogForm = ({ blogs, setBlogs }) => {
+const AddBlogForm = ({ blogs, setBlogs, showNotification }) => {
 	const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
   const [newBlogUrl, setNewBlogUrl] = useState('')
@@ -14,12 +14,17 @@ const AddBlogForm = ({ blogs, setBlogs }) => {
       url: newBlogUrl,
     }
 
-		const returnedBlog = await blogService.create(blogObject)
-		setBlogs(blogs.concat(returnedBlog))
-		
-		setNewBlogTitle('')
-		setNewBlogAuthor('')
-		setNewBlogUrl('')
+		try {
+			const returnedBlog = await blogService.create(blogObject)
+			setBlogs(blogs.concat(returnedBlog))
+			showNotification(`new blog (${returnedBlog.title}) added`, 5000, false)
+			setNewBlogTitle('')
+			setNewBlogAuthor('')
+			setNewBlogUrl('')
+		} catch (exception) {
+			console.error(exception)
+			showNotification(`Failed to add new blog.  Make sure to fill out all the fields.`, 8000, true)
+		}
   }
 	
 	return (
