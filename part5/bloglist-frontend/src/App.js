@@ -14,11 +14,22 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   // DECLARE EFFECT HOOKS
+
+  // get all the blogs from the DB
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )  
   }, [])
+  // check for loggedInUser object in local storage
+  useEffect(() => {
+    const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
+    if (loggedInUserJSON) {
+      const user = JSON.parse(loggedInUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  })
 
   // DECLARE EVENT HANDLERS
   const handleLogin = async event => {
@@ -39,6 +50,12 @@ const App = () => {
     }
   }
 
+  const handleLogout = event => {
+    window.localStorage.removeItem('loggedInUser')
+    blogService.setToken(null)
+    setUser(null)
+  }
+
   return (
     <div>
 
@@ -47,6 +64,7 @@ const App = () => {
       {!user && <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword} />}
 
       {user && <div>
+        <button onClick={handleLogout}>logout</button>
         <h2>blogs</h2>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
