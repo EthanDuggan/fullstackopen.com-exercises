@@ -22,15 +22,19 @@ const tokenExtractor = (request, response, next) => {
   if (authorization && authorization.startsWith('Bearer ')) {
     request.token = authorization.replace('Bearer ', '')
   }
+
   next()
 }
 
 // decodes the JWT and stores the user id in request.user
 const userExtractor = (request, response, next) => {
-	const decodedToken = jwt.verify(request.token, process.env.SECRET)
-	if (decodedToken.id) {
-		request.user = decodedToken.id
+	if (request.token) {
+		const decodedToken = jwt.verify(request.token, process.env.SECRET)
+		if (decodedToken.id) {
+			request.user = decodedToken.id
+		}
 	}
+
 	next()
 }
 
