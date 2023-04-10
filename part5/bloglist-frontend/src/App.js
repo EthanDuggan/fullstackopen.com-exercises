@@ -71,6 +71,20 @@ const App = () => {
 		}
   }
 
+  const likeBlog = async blogId => {
+    try {
+      const blogObject = blogs.find(blog => blog.id === blogId)
+      blogObject.likes += 1
+      const returnedBlog = await blogService.update(blogObject)
+      returnedBlog.user = { username: user.username, name: user.name } // manually add the user information to the front-end
+      setBlogs(blogs.map(blog => blog.id === returnedBlog.id ? returnedBlog : blog))
+      showNotification(`liked (${returnedBlog.title})`, 5000, false)
+    } catch (exception) {
+			console.error(exception)
+			showNotification(`Failed to add new blog.  Make sure to fill out all the fields.`, 8000, true)
+		}
+  }
+
   // MISC FUNCITONS
 
   const showNotification = (message, duration, isError) => {
@@ -107,7 +121,7 @@ const App = () => {
 
         <h2>blogs</h2>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
         )}
         
     </div>
