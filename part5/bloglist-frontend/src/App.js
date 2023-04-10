@@ -11,17 +11,10 @@ import loginService from './services/login'
 const App = () => {
   // DECLARE STATE HOOKS
 
-  // blogs list
   const [blogs, setBlogs] = useState([])
-  // login form and userstate
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  // add blog form
   const [showAddBlogForm, setShowAddBlogForm] = useState(false)
-  // notifications
   const [notificationData, setNotificationData] = useState(null)
-
 
   // DECLARE EFFECT HOOKS
 
@@ -42,19 +35,15 @@ const App = () => {
   }, [])
 
   // DECLARE EVENT HANDLERS
-  const handleLogin = async event => {
-    event.preventDefault()
+  const performLogin = async (username, password) => {
     try {
       const user = await loginService.login({
         username,
         password
       })
-
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
       showNotification(`Logged in ${user.username}`, 5000, false)
     } catch(exception) {
       console.error(exception)
@@ -67,6 +56,18 @@ const App = () => {
     blogService.setToken(null)
     setUser(null)
     showNotification('logged out', 5000, false)
+  }
+
+  const addBlog = async blogObject => {
+    try {
+			const returnedBlog = await blogService.create(blogObject)
+			setBlogs(blogs.concat(returnedBlog))
+			showNotification(`new blog (${returnedBlog.title}) added`, 5000, false)
+			setShowAddBlogForm(false)
+		} catch (exception) {
+			console.error(exception)
+			showNotification(`Failed to add new blog.  Make sure to fill out all the fields.`, 8000, true)
+		}
   }
 
   // MISC FUNCITONS
@@ -82,7 +83,7 @@ const App = () => {
       <div>
         <Notification notificationData={notificationData} />
         <h2>login</h2>
-        <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword} />
+        <LoginForm performLogin={performLogin} />
       </div>
     )
   }
@@ -98,7 +99,7 @@ const App = () => {
         {showAddBlogForm &&
           <div>
             <h2>add blog</h2>
-            <AddBlogForm blogs={blogs} setBlogs={setBlogs} showNotification={showNotification} setShow={setShowAddBlogForm} />
+            <AddBlogForm addBlog={addBlog} />
           </div>
         }
         <button onClick={() => setShowAddBlogForm(!showAddBlogForm)}>{showAddBlogForm ? "cancel" : "add blog"}</button>
