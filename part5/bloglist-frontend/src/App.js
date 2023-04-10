@@ -17,6 +17,8 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  // add blog form
+  const [showAddBlogForm, setShowAddBlogForm] = useState(false)
   // notifications
   const [notificationData, setNotificationData] = useState(null)
 
@@ -88,11 +90,18 @@ const App = () => {
   return (
     <div>
         <Notification notificationData={notificationData} />
-        <p>{user.name} logged in</p>
-        <button onClick={handleLogout}>logout</button>
+        <div>
+          <p>{user.name} logged in</p>
+          <button onClick={handleLogout}>logout</button>
+        </div>
 
-        <h2>add blog</h2>
-        <AddBlogForm blogs={blogs} setBlogs={setBlogs} showNotification={showNotification} />
+        {showAddBlogForm &&
+          <div>
+            <h2>add blog</h2>
+            <AddBlogForm blogs={blogs} setBlogs={setBlogs} showNotification={showNotification} setShow={setShowAddBlogForm} />
+          </div>
+        }
+        <button onClick={() => setShowAddBlogForm(!showAddBlogForm)}>{showAddBlogForm ? "cancel" : "add blog"}</button>
 
         <h2>blogs</h2>
         {blogs.map(blog =>
