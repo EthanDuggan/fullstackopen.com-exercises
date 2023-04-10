@@ -61,6 +61,7 @@ const App = () => {
   const addBlog = async blogObject => {
     try {
 			const returnedBlog = await blogService.create(blogObject)
+      returnedBlog.user = { username: user.username, name: user.name } // manually add the user information to the front-end
 			setBlogs(blogs.concat(returnedBlog))
 			showNotification(`new blog (${returnedBlog.title}) added`, 5000, false)
 			setShowAddBlogForm(false)
