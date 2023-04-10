@@ -75,7 +75,11 @@ describe('POST /api/blogs', () => {
 		const blogsAtEnd = await getBlogsFromDB()
 		expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
 		console.log('user id type:', typeof blogsAtEnd[3].user, blogsAtEnd[3].user)
-		expect(blogsAtEnd).toContainEqual(returnedBlog)
+		blogsAtEnd.forEach(blog => {
+			//this is necessary for the following expect statement to work
+			if (blog.user) blog.user = blog.user.toString()
+		})
+		expect(blogsAtEnd).toContainEqual({...returnedBlog, user: returnedBlog.user})
 	}, 100000)
 
 	test('does not work if no JWT provided', async () => {
@@ -109,6 +113,10 @@ describe('POST /api/blogs', () => {
 
 		const blogsAtEnd = await getBlogsFromDB()
 		expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+		blogsAtEnd.forEach(blog => {
+			//this is necessary for the following expect statement to work
+			if (blog.user) blog.user = blog.user.toString()
+		})
 		expect(blogsAtEnd).toContainEqual(returnedBlog)
 	}, 100000)
 

@@ -2,7 +2,7 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-  "username": "addedWithVSCodeREST",
-  "name": "Jeff",
-  "password": "password123"
+  "username": "eduggan1997",
+  "name": "Ethan",
+  "password": "123abc"
 }
