@@ -1,9 +1,9 @@
 const Notification = ({ notificationData }) => {
 
 	if (!notificationData) return null
-	
+
 	const { message, isError } = notificationData
-	
+
 	const styleColor = isError ? 'red' : 'green'
 
 	const notificationStyle = {

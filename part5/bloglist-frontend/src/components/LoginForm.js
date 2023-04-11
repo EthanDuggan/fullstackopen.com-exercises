@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const LoginForm = ({ performLogin }) => {
 	const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+	const [password, setPassword] = useState('')
 
 	const onSubmit = event => {
 		event.preventDefault()
