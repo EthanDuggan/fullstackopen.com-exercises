@@ -71,6 +71,19 @@ const App = () => {
 		}
   }
 
+  const deleteBlog = async blogToDelete => {
+    if (!window.confirm(`Do you really want to delete ${blogToDelete.title}?`)) return
+
+    try {
+      await blogService.deleteBlog(blogToDelete.id)
+      setBlogsSortedByLikes(blogs.filter(blog => blog.id !== blogToDelete.id))
+      showNotification(`Deleted ${blogToDelete.title}`, 5000, false)
+    } catch (exception) {
+			console.error(exception)
+			showNotification(`Failed to delete blog`, 8000, true)
+		}
+  }
+
   const likeBlog = async blogId => {
     try {
       const blogObject = blogs.find(blog => blog.id === blogId)
@@ -81,7 +94,7 @@ const App = () => {
       showNotification(`liked (${returnedBlog.title})`, 5000, false)
     } catch (exception) {
 			console.error(exception)
-			showNotification(`Failed to add new blog.  Make sure to fill out all the fields.`, 8000, true)
+			showNotification(`Failed to like blog`, 8000, true)
 		}
   }
 
@@ -126,7 +139,13 @@ const App = () => {
 
         <h2>blogs</h2>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            deleteBlog={deleteBlog}
+            likeBlog={likeBlog}
+            currentUser={user}
+          />
         )}
         
     </div>
