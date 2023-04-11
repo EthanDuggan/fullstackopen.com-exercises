@@ -21,7 +21,7 @@ const App = () => {
   // get all the blogs from the DB
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogsSortedByLikes(blogs)
     )  
   }, [])
   // check for loggedInUser object in local storage
@@ -62,7 +62,7 @@ const App = () => {
     try {
 			const returnedBlog = await blogService.create(blogObject)
       returnedBlog.user = { username: user.username, name: user.name } // manually add the user information to the front-end
-			setBlogs(blogs.concat(returnedBlog))
+			setBlogsSortedByLikes(blogs.concat(returnedBlog))
 			showNotification(`new blog (${returnedBlog.title}) added`, 5000, false)
 			setShowAddBlogForm(false)
 		} catch (exception) {
@@ -77,7 +77,7 @@ const App = () => {
       blogObject.likes += 1
       const returnedBlog = await blogService.update(blogObject)
       returnedBlog.user = { username: user.username, name: user.name } // manually add the user information to the front-end
-      setBlogs(blogs.map(blog => blog.id === returnedBlog.id ? returnedBlog : blog))
+      setBlogsSortedByLikes(blogs.map(blog => blog.id === returnedBlog.id ? returnedBlog : blog))
       showNotification(`liked (${returnedBlog.title})`, 5000, false)
     } catch (exception) {
 			console.error(exception)
@@ -90,6 +90,11 @@ const App = () => {
   const showNotification = (message, duration, isError) => {
     setNotificationData({ message, isError })
     setTimeout(() => setNotificationData(null), duration)
+  }
+
+  // use this function instead of setBlogs
+  const setBlogsSortedByLikes = (blogsList) => {
+    setBlogs(blogsList.sort((a, b) => b.likes - a.likes))
   }
 
   // show login form if no user logged in

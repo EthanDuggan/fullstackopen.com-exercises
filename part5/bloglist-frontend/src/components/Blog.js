@@ -5,7 +5,7 @@ const Blog = ({ blog, likeBlog }) => {
 
   const blogStyle = {
     paddingTop: 10,
-    padingLeft: 2,
+    paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
