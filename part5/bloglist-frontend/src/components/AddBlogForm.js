@@ -22,6 +22,7 @@ const AddBlogForm = ({ addBlog }) => {
 			<div>
 				title:
 				<input
+					id="title-input"
 					value={newBlogTitle}
 					onChange={(event) => setNewBlogTitle(event.target.value)}
 				/>
@@ -29,6 +30,7 @@ const AddBlogForm = ({ addBlog }) => {
 			<div>
 				author:
 				<input
+					id="author-input"
 					value={newBlogAuthor}
 					onChange={(event) => setNewBlogAuthor(event.target.value)}
 				/>
@@ -36,6 +38,7 @@ const AddBlogForm = ({ addBlog }) => {
 			<div>
 				url:
 				<input
+					id="url-input"
 					value={newBlogUrl}
 					onChange={(event) => setNewBlogUrl(event.target.value)}
 				/>
