@@ -1,6 +1,7 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 describe('<Blog />', () => {
@@ -36,6 +37,19 @@ describe('<Blog />', () => {
 		expect(url).not.toBeInTheDocument()
 		const likes = screen.queryByText(testBlog.likes, { exact: false })
 		expect(likes).not.toBeInTheDocument()
+	})
+
+	test('renders the details when the "view" button is clicked', async () => {
+		const user = userEvent.setup()
+		const button = screen.getByText('view')
+		await user.click(button)
+
+		const blogDetails = container.querySelector('.blogDetails')
+		expect(blogDetails).toBeInTheDocument()
+		const url = screen.queryByText(testBlog.url, { exact: false })
+		expect(url).toBeInTheDocument()
+		const likes = screen.queryByText(testBlog.likes, { exact: false })
+		expect(likes).toBeInTheDocument()
 	})
 
 })
