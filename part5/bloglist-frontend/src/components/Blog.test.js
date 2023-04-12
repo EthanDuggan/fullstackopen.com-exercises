@@ -39,6 +39,7 @@ describe('<Blog />', () => {
 		expect(likes).not.toBeInTheDocument()
 	})
 
+
 	test('renders the details when the "view" button is clicked', async () => {
 		const user = userEvent.setup()
 		const button = screen.getByText('view')
@@ -50,6 +51,20 @@ describe('<Blog />', () => {
 		expect(url).toBeInTheDocument()
 		const likes = screen.queryByText(testBlog.likes, { exact: false })
 		expect(likes).toBeInTheDocument()
+	})
+
+
+	test('if the like button is clicked twice, then the associated event handler is invoked twice', async () => {
+		// click the view button to expose the like button
+		const user = userEvent.setup()
+		const viewButton = screen.getByText('view')
+		await user.click(viewButton)
+		// click the like button twice
+		const likeButton = screen.getByText('like')
+		await user.click(likeButton)
+		await user.click(likeButton)
+		// check that the stub event handler was invoked twice
+		expect(likeBlogMockFunc.mock.calls).toHaveLength(2)
 	})
 
 })
